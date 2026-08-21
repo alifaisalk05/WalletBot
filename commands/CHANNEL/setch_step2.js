@@ -32,7 +32,7 @@ let channels = message.split(",").map(function(ch) {
 }).filter(Boolean)
 
 // 🏷 Always include @moyepy and remove duplicates
-channels.push("@moyepy")
+channels.push("@MoyeWallet")
 channels = Array.from(new Set(channels))
 
 // 🧩 Prevent abuse (max 10 channels)
