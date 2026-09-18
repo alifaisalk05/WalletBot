@@ -10,3 +10,4 @@
   group: 
 CMD*/
 
+User.setProperty("agreed_terms", true, "boolean")

@@ -16,10 +16,17 @@
   group: 
 CMD*/
 
-/* =======================
-   Command: /setch
-   ======================= */
+Bot.sendMessage(
+  "📢 Send channels separated by commas.\n\n" +
+  "✅ Public:\n" +
+  "@channel1,@channel2\n\n" +
+  "🔒 Private:\n" +
+  "https://t.me/+K2q4xD2zDv82NDZi -1004300578409\n\n" +
+  "You can mix both: and if private channel, then send private channel link space channel id\nGet Channel ID from this bot @userinfobot\n\n" +
+  "@channel1,https://t.me/+K2q4xD2zDv82NDZi -1004300578409",
+  {
+    parse_mode: "Markdown"
+  }
+)
 
-Bot.sendMessage("📢 Please send the channel usernames separated by commas.\nPlease make bot admin in that channels ⚠️\n\nExample:\n`@ch1,@ch2,@ch3`\n", { parse_mode: "Markdown" })
-
-Bot.runCommand("setch_step2")
+Bot.runCommand("settch2")

@@ -1,5 +1,5 @@
 /*CMD
-  command: /acc
+  command: /balance
   help: 
   need_reply: false
   auto_retry_time: 

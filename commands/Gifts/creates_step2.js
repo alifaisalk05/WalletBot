@@ -21,64 +21,92 @@ CMD*/
    ======================= */
 
 let limit = parseInt(message)
+
 if (isNaN(limit) || limit <= 0) {
   Bot.sendMessage("❌ Please enter a valid number.")
   Bot.runCommand("creates_step2")
   return
 }
 
-let amt = User.getProperty("temp_amt")
-if (!amt || isNaN(amt)) {
+let amt = parseFloat(User.getProperty("temp_amt"))
+
+if (isNaN(amt) || amt <= 0) {
   Bot.sendMessage("❌ Invalid amount. Please restart the process.")
   return
 }
 
 let total = amt * limit
+
 let bal = Libs.ResourcesLib.userRes("balance")
 
 if (bal.value() < total) {
-  Bot.sendMessage("❌ You don’t have enough balance. Required: ₹" + total.toFixed(2))
+  Bot.sendMessage(
+    "❌ You don't have enough balance.\n\nRequired: ₹" +
+    total.toFixed(2)
+  )
   return
 }
 
-// 💸 Deduct balance
+// Deduct balance
 bal.add(-total)
 
-// 🔐 Generate random code
-let code = "MOYE-" + Math.random().toString(36).substring(2, 10).toUpperCase()
+// Generate code
+let code = "MOYE-" + Math.random().toString(36).substr(2, 8).toUpperCase()
 
-// 📢 Get required channels safely
+// Get saved channels
 let channels = User.getProperty("required_channels")
-if (!channels) {
-  channels = []
-} else if (typeof channels === "string") {
-  try {
-    channels = JSON.parse(channels)
-  } catch (e) {
-    channels = []
-  }
-}
+if (!channels) channels = []
 
-// 💾 Save code data
+// Get private links
+let privateLinks = User.getProperty("private_links")
+if (!privateLinks) privateLinks = {}
+
+// Save gift
 let data = {
   creator: user.telegramid,
   amount: amt,
   limit: limit,
   claimed: [],
-  channels: channels
+  channels: channels,
+  private_links: privateLinks
 }
 
 Bot.setProperty("code_" + code, data, "json")
 
-// ✅ Success message (HTML mode — safe for underscores)
-let chDisplay = (channels.length > 0) ? channels.join(", ") : "<i>Not Set</i>"
+// Display channels
+let chDisplay = "<i>Not Set</i>"
 
+if (channels.length > 0) {
+  chDisplay = channels.join(", ")
+}
+
+// Direct claim link
+let botUsername = "MoyeWallet_Bot" // Change if your bot username is different
+let claimLink = "https://t.me/" + botUsername + "?start=" + code
+
+// Success
 Bot.sendMessage(
-  "✅ <b>Code created successfully!</b>\n\n" +
-  "📌 <b>Share this code with others:</b>\n" +
+  "✅ <b>Gift Code Created Successfully!</b>\n\n" +
+  "🔑 <b>Code:</b>\n" +
   "<code>" + code + "</code>\n\n" +
-  "💰 <b>Per User:</b> ₹" + amt + "\n" +
-  "👥 <b>Total Users:</b> " + limit + "\n" +
-  "📢 <b>Required Channels:</b> " + chDisplay,
-  { parse_mode: "HTML" }
+  "🔗 <b>Direct Claim Link:</b>\n" +
+  "<code>" + claimLink + "</code>\n\n" +
+  "💰 <b>Per User:</b> ₹" + amt.toFixed(2) + "\n" +
+  "👥 <b>Claim Limit:</b> " + limit + "\n" +
+  "💸 <b>Total Deducted:</b> ₹" + total.toFixed(2) + "\n\n" +
+  "📢 <b>Required Channels:</b>\n" +
+  chDisplay,
+  {
+    parse_mode: "HTML",
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "🎁 Claim Gift",
+            url: claimLink
+          }
+        ]
+      ]
+    }
+  }
 )

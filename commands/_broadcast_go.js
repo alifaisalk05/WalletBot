@@ -13,7 +13,7 @@
   group: 
 CMD*/
 
-let allowedAdmins = ["6966950770", "7794748938"]  // replace with your two user IDs
+let allowedAdmins = ["6966950770"]  // replace with your two user IDs
 
 if (!allowedAdmins.includes(user.telegramid.toString())) {
   Bot.sendMessage("❌ You are not authorized to use this command.")
